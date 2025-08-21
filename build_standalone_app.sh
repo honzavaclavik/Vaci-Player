@@ -39,6 +39,10 @@ cat > TempProject/VaciPlayer/Info.plist << EOF
     <string>APPL</string>
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.music</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
 </dict>
 </plist>
 EOF
@@ -51,6 +55,8 @@ swiftc -o TempProject/VaciPlayer/VaciPlayer \
     -framework SwiftUI \
     -framework AppKit \
     -framework AVFoundation \
+    -framework CoreGraphics \
+    -framework CoreText \
     -target arm64-apple-macos14.0
 
 if [ $? -eq 0 ]; then
@@ -61,6 +67,24 @@ if [ $? -eq 0 ]; then
     # Copy executable and Info.plist
     cp TempProject/VaciPlayer/VaciPlayer VaciPlayer.app/Contents/MacOS/
     cp TempProject/VaciPlayer/Info.plist VaciPlayer.app/Contents/
+    
+    # Copy icon if it exists
+    if [ -f AppIcon.png ]; then
+        cp AppIcon.png VaciPlayer.app/Contents/Resources/
+    fi
+    
+    # Copy the AppIcon.appiconset if it exists
+    if [ -d "VaciPlayer.app/Contents/Resources/AppIcon.appiconset" ]; then
+        # Icon set is already there from previous build
+        echo "Using existing AppIcon.appiconset"
+    else
+        # Create icon set if we have the generation script
+        if [ -f "create_icon_sizes.swift" ]; then
+            mkdir -p VaciPlayer.app/Contents/Resources/AppIcon.appiconset
+            swift create_icon_sizes.swift > /dev/null 2>&1
+            echo "Generated AppIcon.appiconset"
+        fi
+    fi
     
     echo "✅ VaciPlayer.app created successfully!"
     echo "You can now double-click VaciPlayer.app to launch without Terminal"

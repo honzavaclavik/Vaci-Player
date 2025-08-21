@@ -115,6 +115,26 @@ struct SidebarView: View {
                             .foregroundStyle(.secondary)
                     }
                     
+                    // PDF Export button
+                    Button(action: {
+                        if let folderPath = playlist.folderPath {
+                            let folderName = folderPath.lastPathComponent
+                            _ = PDFExportManager.shared.exportPlaylistToPDF(songs: playlist.songs, folderName: folderName)
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "doc.plaintext")
+                            Text("Exportovat do PDF")
+                                .font(.caption)
+                            Spacer()
+                        }
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .background(.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(playlist.songs.filter { $0.includeInPDF }.isEmpty)
+                    
                     // Pause between songs setting
                     VStack(alignment: .leading, spacing: 4) {
                         Label("Pauza mezi skladbami", systemImage: "pause.circle")

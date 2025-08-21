@@ -126,6 +126,20 @@ class Playlist: ObservableObject {
         }
     }
     
+    func updateSongPDFIncluded(_ song: Song, includeInPDF: Bool) {
+        if let index = songs.firstIndex(where: { $0.id == song.id }) {
+            songs[index].includeInPDF = includeInPDF
+            savePersistedData()
+        }
+    }
+    
+    func updateSongPDFTitle(_ song: Song, pdfTitle: String) {
+        if let index = songs.firstIndex(where: { $0.id == song.id }) {
+            songs[index].pdfTitle = pdfTitle
+            savePersistedData()
+        }
+    }
+    
     func saveMasterVolume() {
         guard let folderPath = folderPath else { return }
         let key = "masterVolume_\(folderPath.absoluteString.hash)"
@@ -165,6 +179,8 @@ class Playlist: ObservableObject {
                     songs[index].order = savedSong.order
                     songs[index].startTime = savedSong.startTime
                     songs[index].title = savedSong.title
+                    songs[index].includeInPDF = savedSong.includeInPDF
+                    songs[index].pdfTitle = savedSong.pdfTitle
                 }
             }
             

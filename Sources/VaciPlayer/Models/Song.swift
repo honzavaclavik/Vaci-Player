@@ -9,6 +9,8 @@ struct Song: Identifiable, Codable {
     var order: Int
     var duration: TimeInterval
     var startTime: TimeInterval
+    var includeInPDF: Bool
+    var pdfTitle: String
     
     var filename: String {
         url.lastPathComponent
@@ -16,6 +18,10 @@ struct Song: Identifiable, Codable {
     
     var displayTitle: String {
         title.isEmpty ? filename : title
+    }
+    
+    var pdfDisplayTitle: String {
+        pdfTitle.isEmpty ? displayTitle : pdfTitle
     }
     
     var formattedDuration: String {
@@ -31,6 +37,8 @@ struct Song: Identifiable, Codable {
         self.volume = volume
         self.order = order
         self.startTime = 0
+        self.includeInPDF = true
+        self.pdfTitle = ""
         
         // Load duration from audio file
         let audioAsset = AVAsset(url: url)
