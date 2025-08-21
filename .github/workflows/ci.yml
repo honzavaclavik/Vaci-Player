@@ -91,8 +91,8 @@ jobs:
         echo "🔍 Checking for sensitive patterns..."
         
         # Check for hardcoded secrets (basic patterns)
-        if grep -r -i "password\|secret\|key\|token" Sources/ --include="*.swift" | grep -v "// " | grep -v "func\|var\|let\|struct\|class\|enum"; then
-          echo "⚠️  Potential sensitive information found"
+        if grep -r -E "(password|secret|token)\s*=\s*[\"'][^\"']+[\"']" Sources/ --include="*.swift" | grep -v "// "; then
+          echo "⚠️  Potential hardcoded secrets found"
           exit 1
         fi
         
