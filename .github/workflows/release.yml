@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+        
+    - name: Get version
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+        else
+          VERSION=${{ github.event.inputs.version }}
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+        
+    - name: Validate package
+      run: swift package dump-package
+      
+    - name: Build release
+      run: |
+        swift build --configuration release
+        chmod +x build_standalone_app.sh
+        ./build_standalone_app.sh
+        
+    - name: Create app archive
+      run: |
+        # Create DMG or ZIP for distribution
+        zip -r VaciPlayer-${{ steps.version.outputs.version }}.zip VaciPlayer.app
+        
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        cat > release_notes.md << EOF
+        # VaciPlayer ${{ steps.version.outputs.version }}
+        
+        ## 🎸 Advanced MP3 Player for Guitar Practice
+        
+        ### Features
+        - Advanced MP3 playlist management
+        - Individual song volume control and start times
+        - Pause settings between songs
+        - Master volume control per folder
+        - Drag & drop song reordering
+        - PDF playlist export for band rehearsals
+        - Custom song titles for PDF export
+        - Favorite folder management
+        - Keyboard shortcuts for playback control
+        
+        ### System Requirements
+        - macOS 14.0 (Sonoma) or later
+        - Apple Silicon (M1/M2) or Intel processor
+        
+        ### Installation
+        1. Download VaciPlayer-${{ steps.version.outputs.version }}.zip
+        2. Extract the ZIP file
+        3. Move VaciPlayer.app to your Applications folder
+        4. Launch VaciPlayer and select a folder with MP3 files
+        
+        ### Usage
+        - **Space**: Next song (or play first if none active)
+        - **Enter**: Restart current song from configured start time
+        - **↑**: Previous song
+        - **↓**: Next song
+        - **Escape**: Pause if playing
+        
+        Built with ❤️ for musicians practicing with backing tracks.
+        EOF
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: VaciPlayer ${{ steps.version.outputs.version }}
+        body_path: release_notes.md
+        files: |
+          VaciPlayer-${{ steps.version.outputs.version }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Upload app artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: VaciPlayer-Release-${{ steps.version.outputs.version }}
+        path: |
+          VaciPlayer.app
+          VaciPlayer-${{ steps.version.outputs.version }}.zip
+        retention-days: 30

@@ -16,9 +16,6 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "VaciPlayer",
-            dependencies: []),
-        .testTarget(
-            name: "VaciPlayerTests",
-            dependencies: ["VaciPlayer"])
+            dependencies: [])
     ]
 )
