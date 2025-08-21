@@ -47,7 +47,7 @@ jobs:
         ./scripts/test_basic_functionality.sh
         
     - name: Upload app artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success()
       with:
         name: VaciPlayer-${{ github.sha }}
