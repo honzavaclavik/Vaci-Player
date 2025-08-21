@@ -65,6 +65,88 @@ struct PlayerControlsView: View {
                 .disabled(playlist.currentSongIndex >= playlist.songs.count - 1)
             }
             
+            // Playback rate control
+            HStack {
+                Button(action: { 
+                    audioManager.decreasePlaybackRate()
+                    playlist.playbackRate = audioManager.playbackRate
+                    playlist.savePlaybackRate()
+                }) {
+                    Image(systemName: "minus.circle")
+                }
+                .disabled(audioManager.playbackRate <= 0.5)
+                
+                VStack(spacing: 2) {
+                    Text("Rychlost")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text("\(String(format: "%.1fx", audioManager.playbackRate))")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                .frame(minWidth: 50)
+                
+                Button(action: { 
+                    audioManager.increasePlaybackRate()
+                    playlist.playbackRate = audioManager.playbackRate
+                    playlist.savePlaybackRate()
+                }) {
+                    Image(systemName: "plus.circle")
+                }
+                .disabled(audioManager.playbackRate >= 2.0)
+                
+                Button(action: { 
+                    audioManager.resetPlaybackRate()
+                    playlist.playbackRate = audioManager.playbackRate
+                    playlist.savePlaybackRate()
+                }) {
+                    Text("Reset")
+                        .font(.caption)
+                }
+                .disabled(audioManager.playbackRate == 1.0)
+            }
+            
+            // Pitch control
+            HStack {
+                Button(action: { 
+                    audioManager.decreasePitch()
+                    playlist.pitch = audioManager.pitch
+                    playlist.savePitch()
+                }) {
+                    Image(systemName: "minus.circle")
+                }
+                .disabled(audioManager.pitch <= -12.0)
+                
+                VStack(spacing: 2) {
+                    Text("Ladění")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                    Text(formatPitch(audioManager.pitch))
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                .frame(minWidth: 60)
+                
+                Button(action: { 
+                    audioManager.increasePitch()
+                    playlist.pitch = audioManager.pitch
+                    playlist.savePitch()
+                }) {
+                    Image(systemName: "plus.circle")
+                }
+                .disabled(audioManager.pitch >= 12.0)
+                
+                Button(action: { 
+                    audioManager.resetPitch()
+                    playlist.pitch = audioManager.pitch
+                    playlist.savePitch()
+                }) {
+                    Text("Reset")
+                        .font(.caption)
+                }
+                .disabled(audioManager.pitch == 0.0)
+            }
+            
             // Master volume
             HStack {
                 Image(systemName: "speaker.fill")
@@ -92,7 +174,7 @@ struct PlayerControlsView: View {
             audioManager.pause()
         } else {
             if let currentSong = playlist.currentSong {
-                audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+                audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
                 audioManager.play()
             }
         }
@@ -102,7 +184,7 @@ struct PlayerControlsView: View {
         guard playlist.currentSongIndex > 0 else { return }
         playlist.setCurrentSongIndex(playlist.currentSongIndex - 1)
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
             if audioManager.isPlaying {
                 audioManager.play()
             }
@@ -113,7 +195,7 @@ struct PlayerControlsView: View {
         guard playlist.currentSongIndex < playlist.songs.count - 1 else { return }
         playlist.setCurrentSongIndex(playlist.currentSongIndex + 1)
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
             if audioManager.isPlaying {
                 audioManager.play()
             }
@@ -124,5 +206,15 @@ struct PlayerControlsView: View {
         let minutes = Int(time) / 60
         let seconds = Int(time) % 60
         return String(format: "%d:%02d", minutes, seconds)
+    }
+    
+    private func formatPitch(_ pitch: Float) -> String {
+        if pitch == 0 {
+            return "0"
+        } else if pitch > 0 {
+            return "+\(String(format: "%.1f", pitch))"
+        } else {
+            return String(format: "%.1f", pitch)
+        }
     }
 }

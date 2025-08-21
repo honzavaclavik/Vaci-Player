@@ -24,7 +24,15 @@ struct ContentView: View {
             if let url = notification.object as? URL {
                 playlist.loadSongs(from: url)
                 folderManager.addFavoriteFolder(url)
+                audioManager.playbackRate = playlist.playbackRate
+                audioManager.pitch = playlist.pitch
             }
+        }
+        .onReceive(playlist.$playbackRate) { rate in
+            audioManager.playbackRate = rate
+        }
+        .onReceive(playlist.$pitch) { pitchValue in
+            audioManager.pitch = pitchValue
         }
         .fileImporter(
             isPresented: $showingFolderPicker,
@@ -36,6 +44,8 @@ struct ContentView: View {
                 if let url = urls.first {
                     playlist.loadSongs(from: url)
                     folderManager.addFavoriteFolder(url)
+                    audioManager.playbackRate = playlist.playbackRate
+                    audioManager.pitch = playlist.pitch
                 }
             case .failure(let error):
                 print("Error selecting folder: \(error)")
@@ -116,6 +126,48 @@ struct ContentView: View {
             handleNumberKey(9)
             return .handled
         }
+        .onKeyPress("+") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.increasePlaybackRate()
+            playlist.playbackRate = audioManager.playbackRate
+            playlist.savePlaybackRate()
+            return .handled
+        }
+        .onKeyPress("-") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.decreasePlaybackRate()
+            playlist.playbackRate = audioManager.playbackRate
+            playlist.savePlaybackRate()
+            return .handled
+        }
+        .onKeyPress("=") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.resetPlaybackRate()
+            playlist.playbackRate = audioManager.playbackRate
+            playlist.savePlaybackRate()
+            return .handled
+        }
+        .onKeyPress("[") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.decreasePitch()
+            playlist.pitch = audioManager.pitch
+            playlist.savePitch()
+            return .handled
+        }
+        .onKeyPress("]") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.increasePitch()
+            playlist.pitch = audioManager.pitch
+            playlist.savePitch()
+            return .handled
+        }
+        .onKeyPress("\\") {
+            guard !isEditingMode else { return .ignored }
+            audioManager.resetPitch()
+            playlist.pitch = audioManager.pitch
+            playlist.savePitch()
+            return .handled
+        }
     }
     
     private func handleSpaceKey() {
@@ -135,7 +187,7 @@ struct ContentView: View {
             if let currentSong = playlist.currentSong {
                 // Load song only if it's not the currently loaded song
                 if !audioManager.isSongLoaded(currentSong) {
-                    audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+                    audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
                 }
                 audioManager.play()
             }
@@ -148,7 +200,7 @@ struct ContentView: View {
         // Restart current song from configured start time
         audioManager.seek(to: currentSong.startTime)
         if !audioManager.isPlaying {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
             audioManager.play()
         }
     }
@@ -170,7 +222,7 @@ struct ContentView: View {
         
         // Load new song and reset to beginning
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate)
         }
     }
     
@@ -191,7 +243,7 @@ struct ContentView: View {
         
         // Load new song and reset to beginning
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate)
         }
     }
     

@@ -6,6 +6,8 @@ class Playlist: ObservableObject {
     @Published var folderPath: URL?
     @Published var pauseBetweenSongs: Double = 0.0 // in minutes
     @Published var masterVolumeMultiplier: Float = 1.0 // master volume for entire folder
+    @Published var playbackRate: Float = 1.0 // playback speed for entire folder
+    @Published var pitch: Float = 0.0 // pitch in semitones for entire folder
     
     init() {
         loadAppState()
@@ -48,9 +50,13 @@ class Playlist: ObservableObject {
         // Stop any current playback when switching folders
         NotificationCenter.default.post(name: .folderChanged, object: nil)
         
-        // Load master volume for new folder BEFORE setting folderPath
+        // Load master volume, playback rate and pitch for new folder BEFORE setting folderPath
         let masterVolumeKey = "masterVolume_\(folderURL.absoluteString.hash)"
+        let playbackRateKey = "playbackRate_\(folderURL.absoluteString.hash)"
+        let pitchKey = "pitch_\(folderURL.absoluteString.hash)"
         let savedMasterVolume = UserDefaults.standard.float(forKey: masterVolumeKey)
+        let savedPlaybackRate = UserDefaults.standard.float(forKey: playbackRateKey)
+        let savedPitch = UserDefaults.standard.float(forKey: pitchKey)
         print("DEBUG: Loading folder \(folderURL.lastPathComponent)")
         print("DEBUG: Folder URL: \(folderURL.absoluteString)")
         print("DEBUG: Master volume key: \(masterVolumeKey)")
@@ -71,6 +77,24 @@ class Playlist: ObservableObject {
             }
         }
         print("DEBUG: Final master volume: \(masterVolumeMultiplier)")
+        
+        // Load playback rate for folder
+        if savedPlaybackRate > 0 {
+            playbackRate = savedPlaybackRate
+        } else {
+            if UserDefaults.standard.object(forKey: playbackRateKey) != nil {
+                playbackRate = savedPlaybackRate
+            } else {
+                playbackRate = 1.0 // Default for new folders
+            }
+        }
+        
+        // Load pitch for folder
+        if UserDefaults.standard.object(forKey: pitchKey) != nil {
+            pitch = savedPitch // Can be negative, zero, or positive
+        } else {
+            pitch = 0.0 // Default for new folders
+        }
         
         // Force UI update
         DispatchQueue.main.async {
@@ -150,6 +174,18 @@ class Playlist: ObservableObject {
         print("DEBUG: All UserDefaults keys containing 'masterVolume': \(UserDefaults.standard.dictionaryRepresentation().keys.filter { $0.contains("masterVolume") })")
     }
     
+    func savePlaybackRate() {
+        guard let folderPath = folderPath else { return }
+        let key = "playbackRate_\(folderPath.absoluteString.hash)"
+        UserDefaults.standard.set(playbackRate, forKey: key)
+    }
+    
+    func savePitch() {
+        guard let folderPath = folderPath else { return }
+        let key = "pitch_\(folderPath.absoluteString.hash)"
+        UserDefaults.standard.set(pitch, forKey: key)
+    }
+    
     func savePauseBetweenSongs() {
         UserDefaults.standard.set(pauseBetweenSongs, forKey: "pauseBetweenSongs")
     }
@@ -214,8 +250,10 @@ class Playlist: ObservableObject {
         // Save pause between songs setting
         UserDefaults.standard.set(pauseBetweenSongs, forKey: "pauseBetweenSongs")
         
-        // Save master volume multiplier per folder
+        // Save master volume multiplier, playback rate and pitch per folder
         saveMasterVolume()
+        savePlaybackRate()
+        savePitch()
     }
     
     private func loadAppState() {
