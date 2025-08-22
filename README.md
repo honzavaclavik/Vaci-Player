@@ -35,7 +35,28 @@ Moderní MP3 přehrávač postavený pro macOS 14+ s využitím SwiftUI.
 
 ## Instalace a spuštění
 
-### Standalone macOS aplikace (doporučeno):
+### Homebrew (doporučeno):
+```bash
+# Instalace přes Homebrew
+brew tap honzavaclavik/honzavaclavik
+brew install --cask vaci-player
+
+# Aktualizace
+brew upgrade --cask vaci-player
+```
+
+**⚠️ Důležité - první spuštění:**
+Při prvním spuštění aplikace z Homebrew se zobrazí varování o neověřené aplikaci. Pro povolení aplikace:
+
+1. **Klikněte "Zrušit"** když se zobrazí varování
+2. **Jděte do System Preferences → Security & Privacy → General**
+3. **Klikněte "Open Anyway"** u zprávy o VaciPlayer
+4. **Nebo použijte příkaz:**
+   ```bash
+   sudo xattr -rd com.apple.quarantine /Applications/VaciPlayer.app
+   ```
+
+### Standalone macOS aplikace (development):
 ```bash
 # Vytvořit VaciPlayer.app
 ./build_standalone_app.sh

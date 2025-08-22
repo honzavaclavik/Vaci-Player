@@ -163,8 +163,17 @@ ICON_EOF
     rm temp_icon_generator.swift
     echo "Generated AppIcon.appiconset"
     
-    echo "✅ VaciPlayer.app created successfully!"
-    echo "You can now double-click VaciPlayer.app to launch without Terminal"
+    # Sign the application (ad-hoc signing for local development)
+    echo "Signing application..."
+    codesign --force --deep --sign - VaciPlayer.app
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ VaciPlayer.app created and signed successfully!"
+        echo "You can now double-click VaciPlayer.app to launch without Terminal"
+    else
+        echo "⚠️  VaciPlayer.app created but signing failed"
+        echo "You may need to remove quarantine: sudo xattr -rd com.apple.quarantine VaciPlayer.app"
+    fi
 else
     echo "❌ Build failed"
 fi
