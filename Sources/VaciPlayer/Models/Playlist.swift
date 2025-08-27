@@ -23,8 +23,9 @@ class Playlist: ObservableObject {
     }
     
     var totalDuration: TimeInterval {
-        let songsDuration = songs.reduce(0) { $0 + $1.duration }
-        let pausesDuration = Double(max(0, songs.count - 1)) * pauseBetweenSongs * 60 // convert minutes to seconds
+        let pdfIncludedSongs = songs.filter { $0.includeInPDF }
+        let songsDuration = pdfIncludedSongs.reduce(0) { $0 + max(0, $1.duration - $1.startTime) }
+        let pausesDuration = Double(max(0, pdfIncludedSongs.count - 1)) * pauseBetweenSongs * 60 // convert minutes to seconds
         return songsDuration + pausesDuration
     }
     
@@ -108,9 +109,12 @@ class Playlist: ObservableObject {
         
         do {
             let files = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil)
-            let mp3Files = files.filter { $0.pathExtension.lowercased() == "mp3" }
+            let audioFiles = files.filter { 
+                let ext = $0.pathExtension.lowercased()
+                return ext == "mp3" || ext == "wav"
+            }
             
-            songs = mp3Files.enumerated().map { index, url in
+            songs = audioFiles.enumerated().map { index, url in
                 Song(url: url, order: index)
             }
             

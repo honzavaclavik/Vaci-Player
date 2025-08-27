@@ -106,7 +106,7 @@ struct SidebarView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     // Songs count and total duration
                     VStack(alignment: .leading, spacing: 4) {
-                        Label("\(playlist.songs.count) skladeb", systemImage: "music.note.list")
+                        Label("\(playlist.songs.filter { $0.includeInPDF }.count) skladeb", systemImage: "music.note.list")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         
@@ -150,10 +150,15 @@ struct SidebarView: View {
                             }
                             .frame(maxWidth: .infinity)
                             
-                            Text(String(format: "%.1f min", playlist.pauseBetweenSongs))
+                            Text({
+                                let totalSeconds = Int(playlist.pauseBetweenSongs * 60)
+                                let minutes = totalSeconds / 60
+                                let seconds = totalSeconds % 60
+                                return "\(minutes)m \(seconds)s"
+                            }())
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
-                                .frame(width: 45, alignment: .trailing)
+                                .frame(width: 55, alignment: .trailing)
                         }
                     }
                     
