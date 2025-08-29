@@ -11,7 +11,8 @@ mkdir -p TempProject/VaciPlayer
 # Copy all Swift files to temp project
 cp -r Sources/VaciPlayer/* TempProject/VaciPlayer/
 
-# Create Info.plist
+# Create Info.plist with stable bundle ID for development
+BUNDLE_ID="com.example.vacihacek.player.dev"
 cat > TempProject/VaciPlayer/Info.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -20,7 +21,7 @@ cat > TempProject/VaciPlayer/Info.plist << EOF
     <key>CFBundleExecutable</key>
     <string>VaciPlayer</string>
     <key>CFBundleIdentifier</key>
-    <string>com.example.vacihacek.player</string>
+    <string>$BUNDLE_ID</string>
     <key>CFBundleName</key>
     <string>VaciPlayer</string>
     <key>CFBundleVersion</key>
@@ -55,6 +56,8 @@ swiftc -o TempProject/VaciPlayer/VaciPlayer \
     -framework SwiftUI \
     -framework AppKit \
     -framework AVFoundation \
+    -framework CoreAudio \
+    -framework AudioToolbox \
     -framework CoreGraphics \
     -framework CoreText \
     -target arm64-apple-macos14.0

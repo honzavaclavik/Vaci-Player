@@ -66,6 +66,16 @@ class AudioManager: NSObject, ObservableObject {
         }
     }
     
+    // MARK: - Input Integration Support
+    
+    func getMainMixerNode() -> AVAudioMixerNode {
+        return audioEngine.mainMixerNode
+    }
+    
+    func getAudioEngine() -> AVAudioEngine {
+        return audioEngine
+    }
+    
     func loadSong(_ song: Song, masterVolume: Float = 1.0, playbackRate: Float = 1.0, pitch: Float = 0.0) {
         stop()
         
@@ -150,6 +160,13 @@ class AudioManager: NSObject, ObservableObject {
         stopTimer()
     }
     
+    func resume() {
+        guard audioFile != nil, !isPlaying else { return }
+        playerNode.play()
+        isPlaying = true
+        startTimer()
+    }
+    
     func stop() {
         playerNode.stop()
         audioFile = nil
@@ -161,7 +178,7 @@ class AudioManager: NSObject, ObservableObject {
     }
     
     func seek(to time: TimeInterval) {
-        guard let audioFile = audioFile else { return }
+        guard audioFile != nil else { return }
         
         let wasPlaying = isPlaying
         playerNode.stop()

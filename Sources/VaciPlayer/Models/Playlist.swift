@@ -97,10 +97,7 @@ class Playlist: ObservableObject {
             pitch = 0.0 // Default for new folders
         }
         
-        // Force UI update
-        DispatchQueue.main.async {
-            self.objectWillChange.send()
-        }
+        // UI updates automatically via @Published properties
         
         folderPath = folderURL
         saveAppState()
