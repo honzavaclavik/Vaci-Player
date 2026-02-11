@@ -11,6 +11,10 @@ mkdir -p TempProject/VaciPlayer
 # Copy all Swift files to temp project
 cp -r Sources/VaciPlayer/* TempProject/VaciPlayer/
 
+# Inject build date into BuildInfo.swift
+BUILD_DATE=$(date '+%-d.%-m.%Y')
+sed -i '' "s/__BUILD_DATE__/$BUILD_DATE/g" TempProject/VaciPlayer/Models/BuildInfo.swift
+
 # Create Info.plist
 cat > TempProject/VaciPlayer/Info.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>

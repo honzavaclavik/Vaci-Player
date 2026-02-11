@@ -190,6 +190,13 @@ struct SidebarView: View {
             }
             
             Spacer()
+
+            // Version info
+            Text(BuildInfo.displayString)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
         }
         .frame(minWidth: 200, maxWidth: 250)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 0))
