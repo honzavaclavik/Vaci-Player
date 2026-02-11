@@ -1,150 +1,156 @@
-# VaciPlayer pro macOS
+# VaciPlayer for macOS
 
-Moderní MP3 přehrávač postavený pro macOS 14+ s využitím SwiftUI.
+A modern MP3 player built for macOS 14+ using SwiftUI.
 
-## Funkce
+## Features
 
-### 🎵 Přehrávání a ovládání
-✅ **Přehrávání MP3 souborů** ze zvolené složky  
-✅ **Individuální hlasitost** pro každý soubor  
-✅ **Změna rychlosti přehrávání** (0.5x až 2.0x) bez změny ladění  
-✅ **Změna pitch/ladění** (-12 až +12 půltónů) bez změny rychlosti  
-✅ **Pokročilé ovládání klávesnicí** - kompletní sada zkratek  
-✅ **Start time nastavení** - přeskočení intros/outros  
-✅ **Master volume** per složka  
+### 🎵 Playback & Controls
+✅ **MP3 file playback** from a selected folder
+✅ **Individual volume** for each file
+✅ **Playback speed control** (0.5x to 2.0x) without affecting pitch
+✅ **Pitch/tuning control** (-12 to +12 semitones) without affecting speed
+✅ **Loop playback** - set loop points on the waveform for practice/rehearsal
+✅ **Advanced keyboard controls** - full set of shortcuts
+✅ **Start time setting** - skip intros/outros
+✅ **Master volume** per folder
 
-### 📱 UI a organizace
-✅ **Drag & Drop** pro změnu pořadí písniček  
-✅ **Oblíbené složky** - rychlé přepínání mezi složkami  
-✅ **Moderní macOS design** s glassmorphism efekty  
-✅ **Sidebar navigace** pro výběr složek  
-✅ **Dark/Light mode** podpora  
-✅ **PDF export** playlistu pro kapelu  
+### 📱 UI & Organization
+✅ **Waveform visualization** with zoom, pan, and click-to-seek
+✅ **Drag & Drop** to reorder songs
+✅ **Favorite folders** - quick switching between folders
+✅ **Modern macOS design** with glassmorphism effects
+✅ **Sidebar navigation** for folder selection
+✅ **Dark/Light mode** support
+✅ **PDF export** of the playlist for the band with custom song titles
 
-### 💾 Perzistence a automatizace
-✅ **Perzistentní nastavení** - vše se ukládá per složka  
-✅ **Automatické obnovení stavu** při restartu aplikace  
-✅ **Délky písniček** - zobrazení v mm:ss formátu  
-✅ **Celková délka setu** - s nastavitelnou prodlevou mezi písničkami  
+### 💾 Persistence & Automation
+✅ **Persistent settings** - everything is saved per folder
+✅ **Automatic state restoration** on app restart
+✅ **Song durations** - displayed in mm:ss format
+✅ **Total set duration** - with configurable pause between songs
 
-## Systémové požadavky
+## System Requirements
 
 - macOS 14.0+
 - Xcode 15.0+
 - Swift 5.9+
 
-## Instalace a spuštění
+## Installation & Running
 
-### Homebrew (doporučeno):
+### Homebrew (recommended):
 ```bash
-# Instalace přes Homebrew
+# Install via Homebrew
 brew tap honzavaclavik/honzavaclavik
 brew install --cask vaci-player
 
-# Aktualizace
+# Update
 brew upgrade --cask vaci-player
 ```
 
-**⚠️ Důležité - první spuštění:**
-Při prvním spuštění aplikace z Homebrew se zobrazí varování o neověřené aplikaci. Pro povolení aplikace:
+**⚠️ Important - first launch:**
+On first launch of the Homebrew-installed app, a warning about an unverified application will appear. To allow the app:
 
-1. **Klikněte "Zrušit"** když se zobrazí varování
-2. **Jděte do System Preferences → Security & Privacy → General**
-3. **Klikněte "Open Anyway"** u zprávy o VaciPlayer
-4. **Nebo použijte příkaz:**
+1. **Click "Cancel"** when the warning appears
+2. **Go to System Preferences → Security & Privacy → General**
+3. **Click "Open Anyway"** next to the VaciPlayer message
+4. **Or use the command:**
    ```bash
    sudo xattr -rd com.apple.quarantine /Applications/VaciPlayer.app
    ```
 
-### Standalone macOS aplikace (development):
+### Standalone macOS app (development):
 ```bash
-# Vytvořit VaciPlayer.app
+# Build VaciPlayer.app
 ./build_standalone_app.sh
 
-# Poté spustit dvojklikem na VaciPlayer.app
+# Then launch by double-clicking VaciPlayer.app
 ```
 
-### Z příkazové řádky (development):
+### From the command line (development):
 ```bash
-# Build projektu
+# Build the project
 swift build
 
-# Spuštění
+# Run
 swift run
 ```
 
-## Použití
+## Usage
 
-### Základní ovládání
-1. **Výběr složky**: 
-   - Klikněte na "Choose Folder" v sidebaru, NEBO
-   - Použijte menu "File → Open Folder..." (Cmd+O)
-2. **Oblíbené složky**: Složky se automaticky přidají do oblíbených, klikněte na ně pro rychlé přepnutí
-3. **Přejmenování**: Najeďte myší na oblíbenou složku a klikněte na ikonu tužky
-4. **Odstranění**: Najeďte myší na oblíbenou složku a klikněte na ikonu X
-5. **Přehrávání**: Klikněte na ikonu play u vybrané písničky
-6. **Hlasitost**: Upravte slider u jednotlivých písniček
-7. **Přeuspořádání**: Táhněte písničky v seznamu pro změnu pořadí
+### Basic Controls
+1. **Select a folder**:
+   - Click "Choose Folder" in the sidebar, OR
+   - Use the menu "File → Open Folder..." (Cmd+O)
+2. **Favorite folders**: Folders are automatically added to favorites, click them to quickly switch
+3. **Rename**: Hover over a favorite folder and click the pencil icon
+4. **Remove**: Hover over a favorite folder and click the X icon
+5. **Playback**: Click the play icon next to the desired song
+6. **Volume**: Adjust the slider for individual songs
+7. **Reorder**: Drag songs in the list to change their order
 
-### Pokročilé funkce
-8. **Rychlost přehrávání**: Použijte +/- tlačítka nebo klávesy `+`, `-`, `=` (reset)
-9. **Pitch/Ladění**: Použijte +/- tlačítka nebo klávesy `[`, `]`, `\` (reset)
-10. **Start time**: Klikněte na čas u písničky pro nastavení začátku
-11. **PDF export**: Export playlistu s vlastními názvy pro kapelu
-12. **Prodleva**: Nastavte pauzu mezi písničkami pomocí slideru (0-5 minut)
+### Advanced Features
+8. **Playback speed**: Use the +/- buttons or keys `+`, `-`, `=` (reset)
+9. **Pitch/Tuning**: Use the +/- buttons or keys `[`, `]`, `\` (reset)
+10. **Start time**: Click on the time next to a song to set the start position
+11. **PDF export**: Export the playlist with custom names for the band
+12. **Pause between songs**: Set the pause between songs using the slider (0-5 minutes)
 
-### Klávesové zkratky
-- **Space**: Další písnička (nebo spuštění první)
-- **Enter**: Restart aktuální písničky od start time
-- **↑/↓**: Předchozí/Další písnička (s loop)
-- **Escape**: Pauza
-- **0-9**: Skok na procenta písničky (0% - 90%)
-- **+/-/=**: Rychlost přehrávání (zvýšit/snížit/reset)
-- **[/]/\\**: Pitch ladění (snížit/zvýšit/reset)
+### Keyboard Shortcuts
+- **Space**: Next song (or start the first one)
+- **Enter**: Restart current song from start time
+- **↑/↓**: Previous/Next song (with loop)
+- **Escape**: Pause
+- **0-9**: Jump to percentage of song (0% - 90%)
+- **+/-/=**: Playback speed (increase/decrease/reset)
+- **[/]/\\**: Pitch tuning (decrease/increase/reset)
 
-### Ukončení
+### Quit
 - Menu "VaciPlayer → Quit VaciPlayer" (Cmd+Q)
 
-## Architektura
+## Architecture
 
 ```
 Sources/VaciPlayer/
-├── main.swift              # Entry point
+├── VaciPlayerApp.swift         # Entry point (@main)
+├── AppDelegate.swift           # Application delegate, menu commands
 ├── Models/
-│   ├── Song.swift          # Model pro MP3 soubor
-│   ├── Playlist.swift      # Model pro playlist
-│   └── FavoriteFolder.swift # Model pro oblíbené složky
+│   ├── Song.swift              # MP3 file model
+│   ├── Playlist.swift          # Playlist model
+│   └── FavoriteFolder.swift    # Favorite folders model
 ├── Services/
-│   ├── AudioManager.swift  # Správa audio přehrávání
-│   └── FolderManager.swift # Správa oblíbených složek
+│   ├── AudioManager.swift      # Audio playback management
+│   ├── FolderManager.swift     # Favorite folders management
+│   └── PDFExportManager.swift  # PDF playlist export
 └── Views/
-    ├── ContentView.swift   # Hlavní view
-    ├── SidebarView.swift   # Navigační sidebar s oblíbenými složkami
-    ├── MainPlayerView.swift
-    ├── PlaylistView.swift  # Seznam písniček
-    ├── PlayerControlsView.swift # Ovládací prvky
-    └── FavoriteFolderRowView.swift # Řádek oblíbené složky
+    ├── ContentView.swift       # Main view with keyboard handling
+    ├── SidebarView.swift       # Navigation sidebar with favorite folders
+    ├── MainPlayerView.swift    # Coordinator: playlist + waveform + controls
+    ├── PlaylistView.swift      # Song list with drag & drop
+    ├── PlayerControlsView.swift # Playback controls
+    ├── WaveformView.swift      # Waveform visualization with zoom & loop
+    └── FavoriteFolderRowView.swift # Favorite folder row
 ```
 
-## Klíčové technologie
+## Key Technologies
 
 ### Audio Engine
-- **AVAudioEngine + AVAudioTimePitchEffect**: Pokročilé audio zpracování s nezávislou změnou rychlosti a pitch
-- **AVAudioPlayerNode**: Precizní ovládání přehrávání
-- **AVAsset**: Načítání metadat a délek MP3 souborů
+- **AVAudioEngine + AVAudioTimePitchEffect**: Advanced audio processing with independent speed and pitch control
+- **AVAudioPlayerNode**: Precise playback control with loop support
+- **AVAsset**: Loading metadata and MP3 file durations
 
-### UI a UX  
-- **SwiftUI + macOS 14+**: Moderní UI framework s nejnovějšími funkcemi
-- **Hover Effects**: Moderní interakce s myší pro lepší UX
-- **Drag & Drop**: Nativní podpora pro přeuspořádání
-- **Native macOS App**: Spuštění bez Terminálu s menu bar integrací
+### UI & UX
+- **SwiftUI + macOS 14+**: Modern UI framework with the latest features
+- **Waveform Display**: Visual waveform with zoom (1x-20x), pan, click-to-seek, and loop selection
+- **Hover Effects**: Modern mouse interactions for better UX
+- **Drag & Drop**: Native support for reordering
+- **Native macOS App**: Launch without Terminal with menu bar integration
 
-### Perzistence a správa dat
-- **UserDefaults**: Sofistikované ukládání per složka (hlasitost, pořadí, rychlost, pitch, prodlevy)
-- **File System Integration**: Nativní integrace s macOS file systemem
-- **Real-time Calculations**: Dynamický výpočet celkové délky včetně prodlev
-- **PDF Generation**: Export playlistů pro kapelu
+### Persistence & Data Management
+- **UserDefaults**: Sophisticated per-folder storage (volume, order, speed, pitch, pauses)
+- **File System Integration**: Native integration with the macOS file system
+- **Real-time Calculations**: Dynamic total duration calculation including pauses
+- **PDF Generation**: Playlist export for the band
 
-## Licence
+## License
 
-MIT License - viz LICENSE soubor
+MIT License - see LICENSE file
