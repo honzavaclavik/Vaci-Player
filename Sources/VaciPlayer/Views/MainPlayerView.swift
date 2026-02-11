@@ -3,7 +3,6 @@ import SwiftUI
 struct MainPlayerView: View {
     @ObservedObject var playlist: Playlist
     @ObservedObject var audioManager: AudioManager
-    @ObservedObject var audioInputManager: AudioInputManager
     @Binding var isEditingMode: Bool
     
     var body: some View {
@@ -31,14 +30,7 @@ struct MainPlayerView: View {
                     .padding()
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 0))
             }
-            
-            // Minimal Guitar Amp Panel (at the bottom, toggleable)
-            if audioInputManager.isPanelVisible {
-                MinimalGuitarAmpView(audioInputManager: audioInputManager)
-                    .padding(.horizontal)
-            }
         }
-        // .animation(.easeInOut(duration: 0.3), value: audioInputManager.isPanelVisible) // DISABLED FOR STABILITY
     }
 }
 

@@ -7,24 +7,16 @@ struct ContentView: View {
     @State private var showingFolderPicker = false
     @State private var isEditingMode = false
     
-    // Initialize audioInputManager with audioManager dependency
-    @State private var audioInputManager: AudioInputManager?
-    
     var body: some View {
         NavigationSplitView {
-            if let inputManager = audioInputManager {
-                SidebarView(
-                    playlist: playlist, 
-                    folderManager: folderManager,
-                    audioManager: audioManager,
-                    audioInputManager: inputManager,
-                    showingFolderPicker: $showingFolderPicker
-                )
-            }
+            SidebarView(
+                playlist: playlist, 
+                folderManager: folderManager,
+                audioManager: audioManager,
+                showingFolderPicker: $showingFolderPicker
+            )
         } detail: {
-            if let inputManager = audioInputManager {
-                MainPlayerView(playlist: playlist, audioManager: audioManager, audioInputManager: inputManager, isEditingMode: $isEditingMode)
-            }
+            MainPlayerView(playlist: playlist, audioManager: audioManager, isEditingMode: $isEditingMode)
         }
         .navigationSplitViewStyle(.balanced)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 0))
@@ -175,16 +167,6 @@ struct ContentView: View {
             playlist.pitch = audioManager.pitch
             playlist.savePitch()
             return .handled
-        }
-        .onKeyPress("i") {
-            guard !isEditingMode else { return .ignored }
-            audioInputManager?.togglePanelVisibility()
-            return .handled
-        }
-        .onAppear {
-            if audioInputManager == nil {
-                audioInputManager = AudioInputManager(audioManager: audioManager)
-            }
         }
     }
     

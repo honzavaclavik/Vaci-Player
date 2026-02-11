@@ -4,7 +4,6 @@ struct SidebarView: View {
     @ObservedObject var playlist: Playlist
     @ObservedObject var folderManager: FolderManager
     @ObservedObject var audioManager: AudioManager
-    @ObservedObject var audioInputManager: AudioInputManager
     @Binding var showingFolderPicker: Bool
     
     var body: some View {
@@ -189,41 +188,6 @@ struct SidebarView: View {
                 }
                 .padding(.horizontal)
             }
-            
-            Divider()
-            
-            // Audio Input Panel Toggle
-            VStack(alignment: .leading, spacing: 8) {
-                Label("Baský zesilovač", systemImage: "waveform")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Button(action: {
-                    audioInputManager.togglePanelVisibility()
-                }) {
-                    HStack {
-                        Image(systemName: audioInputManager.isPanelVisible ? "speaker.wave.3.fill" : "speaker.wave.3")
-                            .foregroundColor(audioInputManager.isPanelVisible ? .green : .gray)
-                        
-                        Text(audioInputManager.isPanelVisible ? "Skrýt panel" : "Zobrazit panel")
-                            .font(.caption)
-                        
-                        Spacer()
-                        
-                        Text("I")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.quaternary, in: RoundedRectangle(cornerRadius: 4))
-                    }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 8)
-                    .background(audioInputManager.isPanelVisible ? .green.opacity(0.1) : .clear, in: RoundedRectangle(cornerRadius: 6))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal)
             
             Spacer()
         }

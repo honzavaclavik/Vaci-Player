@@ -174,14 +174,8 @@ struct PlayerControlsView: View {
             audioManager.pause()
         } else {
             if let currentSong = playlist.currentSong {
-                // If the song is already loaded, just resume
-                if audioManager.isSongLoaded(currentSong) {
-                    audioManager.resume()
-                } else {
-                    // Load and play new song
-                    audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
-                    audioManager.play()
-                }
+                audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
+                audioManager.play()
             }
         }
     }
