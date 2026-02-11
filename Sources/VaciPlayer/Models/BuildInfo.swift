@@ -1,7 +1,7 @@
 import Foundation
 
 enum BuildInfo {
-    static let version = "1.0"
+    static let version = "1.2"
     static let buildDate = "__BUILD_DATE__"
 
     static var displayString: String {

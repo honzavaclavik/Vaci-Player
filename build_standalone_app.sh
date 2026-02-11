@@ -28,9 +28,9 @@ cat > TempProject/VaciPlayer/Info.plist << EOF
     <key>CFBundleName</key>
     <string>VaciPlayer</string>
     <key>CFBundleVersion</key>
-    <string>1.0</string>
+    <string>1.2</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0</string>
+    <string>1.2</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>NSHighResolutionCapable</key>
