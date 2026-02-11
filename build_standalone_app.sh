@@ -47,9 +47,9 @@ cat > TempProject/VaciPlayer/Info.plist << EOF
 </plist>
 EOF
 
-# Build using swiftc directly
-echo "Compiling Swift files..."
-swiftc -o TempProject/VaciPlayer/VaciPlayer \
+# Build using swiftc directly - Universal Binary (arm64 + x86_64)
+echo "Compiling for arm64..."
+swiftc -o TempProject/VaciPlayer/VaciPlayer-arm64 \
     TempProject/VaciPlayer/*.swift \
     TempProject/VaciPlayer/*/*.swift \
     -framework SwiftUI \
@@ -58,6 +58,35 @@ swiftc -o TempProject/VaciPlayer/VaciPlayer \
     -framework CoreGraphics \
     -framework CoreText \
     -target arm64-apple-macos14.0
+
+if [ $? -ne 0 ]; then
+    echo "❌ arm64 build failed"
+    rm -rf TempProject
+    exit 1
+fi
+
+echo "Compiling for x86_64..."
+swiftc -o TempProject/VaciPlayer/VaciPlayer-x86_64 \
+    TempProject/VaciPlayer/*.swift \
+    TempProject/VaciPlayer/*/*.swift \
+    -framework SwiftUI \
+    -framework AppKit \
+    -framework AVFoundation \
+    -framework CoreGraphics \
+    -framework CoreText \
+    -target x86_64-apple-macos14.0
+
+if [ $? -ne 0 ]; then
+    echo "❌ x86_64 build failed"
+    rm -rf TempProject
+    exit 1
+fi
+
+echo "Creating Universal Binary..."
+lipo -create \
+    TempProject/VaciPlayer/VaciPlayer-arm64 \
+    TempProject/VaciPlayer/VaciPlayer-x86_64 \
+    -output TempProject/VaciPlayer/VaciPlayer
 
 if [ $? -eq 0 ]; then
     # Create app bundle
