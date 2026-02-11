@@ -245,6 +245,7 @@ class AudioManager: NSObject, ObservableObject {
     }
     
     private func startTimer() {
+        timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             guard let self = self, let audioFile = self.audioFile else { return }
             

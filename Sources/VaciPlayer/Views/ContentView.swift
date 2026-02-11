@@ -222,10 +222,10 @@ struct ContentView: View {
         
         // Load new song and reset to beginning
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
         }
     }
-    
+
     private func handleNextSong() {
         guard !playlist.songs.isEmpty else { return }
         
@@ -243,10 +243,10 @@ struct ContentView: View {
         
         // Load new song and reset to beginning
         if let currentSong = playlist.currentSong {
-            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate)
+            audioManager.loadSong(currentSong, masterVolume: playlist.masterVolumeMultiplier, playbackRate: audioManager.playbackRate, pitch: audioManager.pitch)
         }
     }
-    
+
     private func handleEscapeKey() {
         if audioManager.isPlaying {
             audioManager.pause()

@@ -20,9 +20,9 @@ class PDFExportManager {
         
         // Create PDF data
         let pdfData = NSMutableData()
-        let consumer = CGDataConsumer(data: pdfData)!
+        guard let consumer = CGDataConsumer(data: pdfData) else { return false }
         var mediaBox = pageRect
-        let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil)!
+        guard let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else { return false }
         
         context.beginPDFPage(nil)
         
@@ -84,43 +84,60 @@ class PDFExportManager {
         context.endPDFPage()
         context.closePDF()
         
-        // Show save panel
-        let savePanel = NSSavePanel()
-        savePanel.title = "Exportovat Playlist do PDF"
-        savePanel.message = "Vyberte kam uložit PDF soubor s playlistem"
-        savePanel.nameFieldStringValue = "\(folderName)_playlist.pdf"
-        savePanel.allowedContentTypes = [.pdf]
-        
-        let response = savePanel.runModal()
-        if response == .OK, let url = savePanel.url {
-            do {
-                try pdfData.write(to: url)
-                
-                // Show success alert
-                DispatchQueue.main.async {
-                    let alert = NSAlert()
-                    alert.messageText = "Export dokončen"
-                    alert.informativeText = "Playlist byl úspěšně exportován do PDF."
-                    alert.alertStyle = .informational
-                    alert.addButton(withTitle: "OK")
-                    alert.runModal()
-                }
-                
-                return true
-            } catch {
-                // Show error alert
-                DispatchQueue.main.async {
-                    let alert = NSAlert()
-                    alert.messageText = "Chyba při exportu"
-                    alert.informativeText = "Nepodařilo se uložit PDF soubor: \(error.localizedDescription)"
-                    alert.alertStyle = .critical
-                    alert.addButton(withTitle: "OK")
-                    alert.runModal()
-                }
-                return false
+        // Ask user: save to Downloads or choose location
+        let choiceAlert = NSAlert()
+        choiceAlert.messageText = "Exportovat Playlist do PDF"
+        choiceAlert.informativeText = "Kam chcete uložit soubor \"\(folderName)_playlist.pdf\"?"
+        choiceAlert.addButton(withTitle: "Uložit do Stažené")
+        choiceAlert.addButton(withTitle: "Vybrat umístění…")
+        choiceAlert.addButton(withTitle: "Zrušit")
+
+        let choice = choiceAlert.runModal()
+
+        var targetURL: URL?
+
+        if choice == .alertFirstButtonReturn {
+            // Save to Downloads
+            let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+            targetURL = downloadsURL.appendingPathComponent("\(folderName)_playlist.pdf")
+        } else if choice == .alertSecondButtonReturn {
+            // Show save panel
+            let savePanel = NSSavePanel()
+            savePanel.title = "Exportovat Playlist do PDF"
+            savePanel.nameFieldStringValue = "\(folderName)_playlist.pdf"
+            savePanel.allowedContentTypes = [.pdf]
+
+            if savePanel.runModal() == .OK {
+                targetURL = savePanel.url
             }
         }
-        
-        return false
+
+        guard let url = targetURL else { return false }
+
+        do {
+            try pdfData.write(to: url)
+
+            // Show success alert with option to open
+            let successAlert = NSAlert()
+            successAlert.messageText = "Export dokončen"
+            successAlert.informativeText = "Playlist byl uložen do:\n\(url.path)"
+            successAlert.alertStyle = .informational
+            successAlert.addButton(withTitle: "Otevřít PDF")
+            successAlert.addButton(withTitle: "OK")
+
+            if successAlert.runModal() == .alertFirstButtonReturn {
+                NSWorkspace.shared.open(url)
+            }
+
+            return true
+        } catch {
+            let errorAlert = NSAlert()
+            errorAlert.messageText = "Chyba při exportu"
+            errorAlert.informativeText = "Nepodařilo se uložit PDF soubor: \(error.localizedDescription)"
+            errorAlert.alertStyle = .critical
+            errorAlert.addButton(withTitle: "OK")
+            errorAlert.runModal()
+            return false
+        }
     }
 }
